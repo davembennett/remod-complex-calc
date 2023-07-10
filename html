@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Fracture Remodeling Calculator</h2>
+
+<form id="remodelingForm">
+  <label for="physis">Nearest Physis:</label><br>
+  <select id="physis" name="physis">
+    <option value="proximalHumerus">Proximal humerus</option>
+    <option value="distalHumerus">Distal humerus</option>
+    <option value="proximalRadius">Proximal radius</option>
+    <option value="distalRadius">Distal radius</option>
+    <option value="proximalUlna">Proximal ulna</option>
+    <option value="distalUlna">Distal ulna</option>
+    <option value="proximalFemur">Proximal femur</option>
+    <option value="distalFemur">Distal femur</option>
+    <option value="proximalTibia">Proximal tibia</option>
+    <option value="distalTibia">Distal tibia</option>
+    <option value="proximalFibula">Proximal fibula</option>
+    <option value="distalFibula">Distal fibula</option>
+  </select><br>
+  <label for="sex">Sex:</label><br>
+  <select id="sex" name="sex">
+    <option value="male">Male</option>
+    <option value="female">Female</option>
+  </select><br>
+  <label for="distance">Distance from Physis (mm):</label><br>
+  <input type="number" id="distance" name="distance"><br>
+  <label for="angulation">Initial Angulation (degrees):</label><br>
+  <input type="number" id="angulation" name="angulation"><br>
+  <label for="age">Patient Age at Fracture (years):</label><br>
+  <input type="number" id="age" name="age"><br><br>
+  <input type="button" value="Calculate" onclick="calculateRemodelingTime()">
+</form>
+
+<p id="output"></p>
+
+<script>
+function calculateRemodelingTime() {
+  var physis = document.getElementById("physis").value;
+  var sex = document.getElementById("sex").value;
+  var distance = parseFloat(document.getElementById("distance").value);
+  var angulation = parseFloat(document.getElementById("angulation").value);
+  var age = parseFloat(document.getElementById("age").value);
+  
+  // Adjust age for older boys and girls
+  if ((sex == "male" && age > 16) || (sex == "female" && age > 14)) {
+    age += 2;
+  }
+  
+  var A0 = angulation;
+  var R = 0.034;
+  var d = distance;
+  var C = 0.015;  // Adjusted constant to increase the final time
+
+  var g;
+  switch (physis) {
+    case 'proximalHumerus':
+      g = R * (7 / 5.25);
+      break;
+    case 'distalHumerus':
+      g = R * (2 / 5.25);
+      break;
+    case 'proximalRadius':
+      g = R * (1.75 / 5.25);
+      break;
+    case 'distalRadius':
+      g = R;
+      break;
+    case 'proximalUlna':
+      g = R * (5.5 / 5.25);
+      break;
+    case 'distalUlna':
+      g = R * (1.5 / 5.25);
+      break;
+    case 'proximalFemur':
+      g = R * (3.5 / 5.25);
+      break;
+    case 'distalFemur':
+      g = R * (9 / 5.25);
+      break;
+    case 'proximalTibia':
+      g = R * (6 / 5.25);
+      break;
+    case 'distalTibia':
+      g = R * (5 / 5.25);
+      break;
+    case 'proximalFibula':
+      g = R * (6.5 / 5.25);
+      break;
+    case 'distalFibula':
+      g = R * (4.5 / 5.25);
+      break;
+  }
+
+  var time = Math.abs(C * Math.log(2 / A0) / ((0.034 * g + g / (1 + Math.sqrt(d))) * (1 + 0.0025 * A0) * Math.max(0, 1 - age / 20)));
+
+  document.getElementById("output").innerHTML = "Estimated time for complete remodeling: " + time.toFixed(2) + " months";
+}
+</script>
+
+</body>
+</html>
